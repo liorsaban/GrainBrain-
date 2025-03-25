@@ -1,0 +1,51 @@
+# Byte-compiled / virtual environment files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+ENV/
+.venv/
+.DS_Store
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# Streamlit & log files
+.streamlit/
+logs/
+*.log
+
+# OS-generated files
+Thumbs.db
+*.bak
+*.swp
+*.swo
+
+# Compiled distributions
+dist/
+build/
+*.egg-info/
+
+# Ignore IDE / editor settings
+.vscode/
+.idea/
+*.sublime-workspace
+
+# Python virtual environment
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Secrets & configurations (modify if needed)
+config.json
+secrets.toml
+
+# Ignore large data files (if applicable)
+data/
+datasets/
+*.csv
+*.xlsx
+*.h5
+*.db
