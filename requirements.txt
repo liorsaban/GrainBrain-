@@ -3,8 +3,7 @@ pandas
 numpy
 matplotlib
 scipy
-serial
 pyserial
 reportlab
 requests
-socket
+flask
