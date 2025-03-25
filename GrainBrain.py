@@ -21,40 +21,56 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Spacer, Ima
 
 matplotlib.use('Agg')  # Use a non-interactive backend for Streamlit
 
-import requests
-import socket
 
-# ✅ Detect local network IP automatically
-def get_local_ip():
+# ✅ Persistent connection (cached across page reloads)
+@st.cache_resource
+def init_serial_connection(port="COM4"):
     try:
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        return local_ip
-    except Exception as e:
+        conn = SerialConnection(port)
+        return conn if conn.ser else None
+    except serial.SerialException as e:
+        st.error(f"❌ SerialException: {e}")
         return None
 
-# ✅ Request weight data from the local API
+def close_serial_connection():
+    if "scale" in st.session_state and st.session_state.scale:
+        st.session_state.scale.close()
+        del st.session_state.scale
+        st.cache_resource.clear()
+        time.sleep(2)  # Allow OS to release COM port
+
+# Allow user to select COM port dynamically
+available_ports = [p.device for p in serial.tools.list_ports.comports()]
+selected_port = st.selectbox("🔌 Select COM port:", available_ports, index=available_ports.index("COM4") if "COM4" in available_ports else 0)
+
+
+# Initialize connection if not already connected
+if "scale" not in st.session_state or st.session_state.scale is None:
+    st.session_state.scale = init_serial_connection(selected_port)
+
 def read_weight():
-    local_ip = get_local_ip()
-    if not local_ip:
-        return "Error: Could not determine local IP"
-    
-    api_url = f"http://{local_ip}:5000/read_weight"
-    
-    try:
-        response = requests.get(api_url)
-        data = response.json()
-        return data.get("weight", "Error: No Data")
-    except requests.exceptions.RequestException as e:
-        return f"Error: {e}"
+    if st.session_state.scale:
+        return st.session_state.scale.read_weight()
+    else:
+        st.error("⚠️ Scale connection unavailable.")
+        return np.nan
 
-st.title("GrainBrain - Cloud Scale Reader")
+# ✅ Reliable weight reading function
+def read_weight():
+    if "scale" in st.session_state and st.session_state.scale:
+        raw_weight = st.session_state.scale.read_weight()
+        try:
+            return float(raw_weight)
+        except (ValueError, TypeError):
+            st.warning(f"⚠️ Received invalid data: {raw_weight}")
+            return np.nan
+    else:
+        st.error("⚠️ Scale connection is not available.")
+        return np.nan
 
-if st.button("Read Weight"):
-    weight = read_weight()
-    st.write(f"Weight: {weight} g")
+
+
+
 # ✅ Define Sieve Sizes
 sieve_sizes = np.array([
     2000, 1700, 1410, 1180, 1000, 850, 710, 600, 500, 420,
