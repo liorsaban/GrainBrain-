@@ -31,10 +31,10 @@ Ensure your scale supports **serial communication** and connect it via a **USB-t
 - **Parity:** None
 - **Stop Bits:** 1
 - **Flow Control:** None
-- **Default port:** COM4 *(modifiable in the app)*
+- **Default port:** COM4 *(modify if needed)*
 
 ### **3️⃣ Run the App**
-Launch the Streamlit app with:
+Launch the app
 
 ```bash
 streamlit run app.py
@@ -42,10 +42,9 @@ streamlit run app.py
 
 ---
 
-## 🚀 How to Use GrainBrain
+## How to Use GrainBrain
 
 ### **Step 1: Enter Sample ID**
-- Provide a unique identifier for the sample.
 
 ### **Step 2: Measure Empty Sieves**
 - Place each empty sieve on the scale and press **"Measure"**.
@@ -57,9 +56,8 @@ streamlit run app.py
 
 ### **Step 4: Analyze & Export Data**
 - View calculated statistics (**mean size, D-values, modes**).
-- Download **Excel, CSV, or PDF** reports.
-- The **PDF includes a grain-size distribution plot**.
-
+- Download **Excel, CSV, or PDF report**.
+-Download data and statistics in **Excel / CSV**.
 ---
 
 ## ❌ Troubleshooting
@@ -67,15 +65,14 @@ streamlit run app.py
 ### ⚠️ **Scale Not Connecting?**
 - Ensure no other program (e.g., **serial monitor**) is using the port.
 - Try **reconnecting the USB cable** and restarting the app.
-- Select the correct **COM port** in the app.
+- Modify the **COM port** settings if needed.
 
 ### ⚠️ **Weight Not Updating?**
 - Ensure the **scale is stable** before measuring.
 - Press the **"Measure"** button again to retry.
-
+- Make sure Serial Connection Settings are correct
 
 ---
 
-## 🎓 Credits
-Developed for **soil scientists** to streamline sieve analysis. 🚀
-
+## Credits
+Developed by Lior Saban to streamline sieve analysis.
