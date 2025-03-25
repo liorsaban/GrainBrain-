@@ -24,18 +24,18 @@ matplotlib.use('Agg')  # Use a non-interactive backend for Streamlit
 import requests
 import socket
 
-# ✅ Automatically get the local IP of the computer running the API
+# ✅ Detect local network IP automatically
 def get_local_ip():
     try:
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(("8.8.8.8", 80))  # Google's DNS to determine local IP
+        s.connect(("8.8.8.8", 80))
         local_ip = s.getsockname()[0]
         s.close()
         return local_ip
-    except Exception:
+    except Exception as e:
         return None
 
-# ✅ Fetch weight from the local API
+# ✅ Request weight data from the local API
 def read_weight():
     local_ip = get_local_ip()
     if not local_ip:
@@ -55,7 +55,6 @@ st.title("GrainBrain - Cloud Scale Reader")
 if st.button("Read Weight"):
     weight = read_weight()
     st.write(f"Weight: {weight} g")
-
 # ✅ Define Sieve Sizes
 sieve_sizes = np.array([
     2000, 1700, 1410, 1180, 1000, 850, 710, 600, 500, 420,
