@@ -48,25 +48,35 @@ selected_port = st.selectbox("🔌 Select COM port:", available_ports, index=ava
 if "scale" not in st.session_state or st.session_state.scale is None:
     st.session_state.scale = init_serial_connection(selected_port)
 
-def read_weight():
-    if st.session_state.scale:
-        return st.session_state.scale.read_weight()
-    else:
-        st.error("⚠️ Scale connection unavailable.")
-        return np.nan
+import requests
+import socket
 
-# ✅ Reliable weight reading function
+# ✅ Automatically get local IP (your PC running the Flask API)
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return local_ip
+    except Exception as e:
+        return None
+
+# ✅ Request weight data from the local API
 def read_weight():
-    if "scale" in st.session_state and st.session_state.scale:
-        raw_weight = st.session_state.scale.read_weight()
-        try:
-            return float(raw_weight)
-        except (ValueError, TypeError):
-            st.warning(f"⚠️ Received invalid data: {raw_weight}")
-            return np.nan
-    else:
-        st.error("⚠️ Scale connection is not available.")
-        return np.nan
+    local_ip = get_local_ip()
+    if not local_ip:
+        return "Error: Could not determine local IP"
+    
+    api_url = f"http://{local_ip}:5000/read_weight"
+    
+    try:
+        response = requests.get(api_url)
+        data = response.json()
+        return data.get("weight", "Error: No Data")
+    except requests.exceptions.RequestException as e:
+        return f"Error: {e}"
+
 
 
 
